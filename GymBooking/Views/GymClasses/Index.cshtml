@@ -1,0 +1,75 @@
+﻿@model IEnumerable<GymBooking.Models.GymClass>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+@if (User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-action="Create">Create pass</a>
+    </p>
+}
+
+<a class="button" asp-action="Passed">Display passed date</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StartTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Duration)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Duration)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+                <td>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        @if (item.AttendingMembers.Any(x => x.ApplicationUserId == User.Claims.ElementAt(0).Value))
+                        {
+                            <a asp-action="BookingToogle" asp-route-id="@item.Id">Unbook</a> <span>|</span>
+                        }
+                        else
+                        {
+                            <a asp-action="BookingToogle" asp-route-id="@item.Id">Book</a> <span>|</span>
+                        }
+                        
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                    }
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <span>|</span>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> <span>|</span>
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    }
+                </td>
+        </tr>
+}
+    </tbody>
+</table>
